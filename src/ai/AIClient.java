@@ -217,13 +217,13 @@ public class AIClient implements Runnable {
         // Check if maximum depth level has been reached or if node is terminal node.
         if (depthLevel == 0 || node.isTerminalNode) {
             // Calculate utility score for the node.
-            node.calculateUtilityScore();
+            //node.calculateUtilityScore();
             return node;
             }
         
         else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
-            node.utilityScore = -999;
+            node.utilityScore = -9999;
             
             for (Node n : node.children) {
                 // Recursively call itself to go deeper into the tree. 
@@ -236,7 +236,7 @@ public class AIClient implements Runnable {
             }
             return node;
         } else if (player == 2) { // If player = MIN
-            node.utilityScore = 999;
+            node.utilityScore = 9999;
             for (Node n : node.children) {   
                 //n.state.makeMove(n.nodeId);
                 n = minimaxAbp(depthLevel - 1, n, 1);

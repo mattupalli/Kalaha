@@ -21,8 +21,8 @@ public class Node {
     public ArrayList<Node> children = new ArrayList();
     public boolean isTerminalNode;
     
-    public int alpha;
-    public int beta;
+    //public int alpha;
+    //public int beta;
     
     public Node(GameState state, int nodeId) {
         this.state = state;
