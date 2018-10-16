@@ -11,7 +11,7 @@ import kalaha.*;
  * This is the main class for your Kalaha AI bot. Currently it only makes a
  * random, valid move each turn.
  *
- * @author Johan Hagelb√§ck
+ * @author Johan Hagelb‰ck
  */
 public class AIClient implements Runnable {
 
@@ -189,7 +189,7 @@ public class AIClient implements Runnable {
 
         // Grade C. Minimax with DFS and ABP
         Node rootNode = new Node(currentBoard.clone(), 0, -9999, 9999); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
-        int depth = 7; // How deep the algoritm should go.
+        int depth = 7; // How deep the algorithm should go.
         Node bestNode = minimaxAbp(depth, rootNode, 1); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
         int bestMove = bestNode.prevNode; // Best move is stored in the nodes prevNode variable. 
 
@@ -217,21 +217,13 @@ public class AIClient implements Runnable {
         // Check if maximum depth level has been reached or if node is terminal node.
         if (depthLevel == 0 || node.isTerminalNode) {
             // Calculate utility score for the node.
-<<<<<<< HEAD
-            //node.calculateUtilityScore();
-=======
            // node.calculateUtilityScore();
->>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
             return node;
             }
         
         else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
-<<<<<<< HEAD
-            node.utilityScore = -9999;
-=======
             node.MaxValue = -9999;
->>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
             
             for (Node i : node.children) {
                 
@@ -255,15 +247,6 @@ public class AIClient implements Runnable {
             return node;
             
         } else if (player == 2) { // If player = MIN
-<<<<<<< HEAD
-            node.utilityScore = 9999;
-            for (Node n : node.children) {   
-                //n.state.makeMove(n.nodeId);
-                n = minimaxAbp(depthLevel - 1, n, 1);
-                if (n.utilityScore < node.utilityScore) {
-                    node.utilityScore = n.utilityScore;
-                    node.prevNode = n.nodeId;
-=======
             node.MinValue = 9999;
             for (Node i : node.children) { 
                 if(node.MinValue <= node.beta){
@@ -277,7 +260,6 @@ public class AIClient implements Runnable {
                 if (i.MinValue < node.MinValue) {
                     node.MinValue = i.MinValue;
                     node.prevNode = i.nodeId;
->>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
                 }
             }
             return node;

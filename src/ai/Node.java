@@ -17,12 +17,11 @@ public class Node {
     public int prevNode;
     public int MaxValue;
     public int MinValue;
+    public int alpha;
+    public int beta;
     
     public ArrayList<Node> children = new ArrayList();
     public boolean isTerminalNode;
-    
-    //public int alpha;
-    //public int beta;
     
     public Node(GameState state, int nodeId, int alpha, int beta) {
         this.state = state;
