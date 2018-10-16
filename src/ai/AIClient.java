@@ -188,7 +188,7 @@ public class AIClient implements Runnable {
     public int getMove(GameState currentBoard) {
 
         // Grade C. Minimax with DFS and ABP
-        Node rootNode = new Node(currentBoard.clone(), 0); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
+        Node rootNode = new Node(currentBoard.clone(), 0, -9999, 9999); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
         int depth = 7; // How deep the algoritm should go.
         Node bestNode = minimaxAbp(depth, rootNode, 1); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
         int bestMove = bestNode.prevNode; // Best move is stored in the nodes prevNode variable. 
@@ -217,25 +217,45 @@ public class AIClient implements Runnable {
         // Check if maximum depth level has been reached or if node is terminal node.
         if (depthLevel == 0 || node.isTerminalNode) {
             // Calculate utility score for the node.
+<<<<<<< HEAD
             //node.calculateUtilityScore();
+=======
+           // node.calculateUtilityScore();
+>>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
             return node;
             }
         
         else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
+<<<<<<< HEAD
             node.utilityScore = -9999;
+=======
+            node.MaxValue = -9999;
+>>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
             
-            for (Node n : node.children) {
-                // Recursively call itself to go deeper into the tree. 
-                n = minimaxAbp(depthLevel - 1, n, 2);
+            for (Node i : node.children) {
+                
+            if(node.MaxValue >= node.alpha){
+                node.alpha = node.MaxValue;
+            
+             if (node.alpha >= node.beta){
+                break;
+            }}
+// Recursively call itself to go deeper into the tree. 
+                  i.state.makeMove(i.nodeId);
+                i = minimaxAbp(depthLevel - 1, i, 2);
+                
                 // If new utility score is better, store it as well as store the nodeId in prevNode for backtracking. 
-                if (n.utilityScore > node.utilityScore) {
-                    node.utilityScore = n.utilityScore;
-                    node.prevNode = n.nodeId;
+                
+                if (i.MaxValue > node.MaxValue) {
+                    node.MaxValue = i.MaxValue;
+                    node.prevNode = i.nodeId;
                 }
             }
             return node;
+            
         } else if (player == 2) { // If player = MIN
+<<<<<<< HEAD
             node.utilityScore = 9999;
             for (Node n : node.children) {   
                 //n.state.makeMove(n.nodeId);
@@ -243,6 +263,21 @@ public class AIClient implements Runnable {
                 if (n.utilityScore < node.utilityScore) {
                     node.utilityScore = n.utilityScore;
                     node.prevNode = n.nodeId;
+=======
+            node.MinValue = 9999;
+            for (Node i : node.children) { 
+                if(node.MinValue <= node.beta){
+                    node.beta = node.MinValue;
+                                
+                if (node.alpha >= node.beta){
+                    break;
+                }}
+                i.state.makeMove(i.nodeId);
+                i = minimaxAbp(depthLevel - 1, i, 1);
+                if (i.MinValue < node.MinValue) {
+                    node.MinValue = i.MinValue;
+                    node.prevNode = i.nodeId;
+>>>>>>> f390eeef84015768c8460eb3c96fa4a0a8fb5038
                 }
             }
             return node;
