@@ -19,6 +19,7 @@ public class Node {
     public int MinValue;
     public int alpha;
     public int beta;
+    public int score;
     
     public ArrayList<Node> children = new ArrayList();
     public boolean isTerminalNode;
@@ -29,6 +30,11 @@ public class Node {
         this.alpha = alpha;
         this.beta = beta;
     }
+    
+    public Node(GameState state, int nodeId) {
+    	this.state = state;
+    	this.nodeId = nodeId;
+    }
 
     public void expandNode() {
         
@@ -36,7 +42,7 @@ public class Node {
             // If the move is possible -> store in children, else discard it. 
             if (state.moveIsPossible(i)) {
                 isTerminalNode = false;
-                children.add(new Node(state.clone(), i, alpha, beta));
+                children.add(new Node(state.clone(), i));
             }
         }
         // If there's no children the node is a terminal node / leaf node. 
@@ -47,8 +53,8 @@ public class Node {
     }
     
     // Calculate utility score.
-    //public void calculateUtilityScore() {
-      //  utilityScore = 10*state.getScore(1) - state.getScore(2);
-    //}   
+    public void calculateUtilityScore() {
+       score = 10*state.getScore(1) - state.getScore(2);
+    }   
 
 }

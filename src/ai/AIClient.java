@@ -188,8 +188,8 @@ public class AIClient implements Runnable {
     public int getMove(GameState currentBoard) {
 
         // Grade C. Minimax with DFS and ABP
-        Node rootNode = new Node(currentBoard.clone(), 0, -9999, 9999); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
-        int depth = 7; // How deep the algorithm should go.
+        Node rootNode = new Node(currentBoard.clone(), 0, -999999, 999999); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
+        int depth = 8; // How deep the algoritm should go.
         Node bestNode = minimaxAbp(depth, rootNode, 1); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
         int bestMove = bestNode.prevNode; // Best move is stored in the nodes prevNode variable. 
 
@@ -217,24 +217,24 @@ public class AIClient implements Runnable {
         // Check if maximum depth level has been reached or if node is terminal node.
         if (depthLevel == 0 || node.isTerminalNode) {
             // Calculate utility score for the node.
-           // node.calculateUtilityScore();
+           //node.calculateUtilityScore();
             return node;
             }
         
         else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
-            node.MaxValue = -9999;
+            node.MaxValue = -999999;
             
             for (Node i : node.children) {
                 
-            if(node.MaxValue >= node.alpha){
+            if(node.MaxValue > node.alpha){
                 node.alpha = node.MaxValue;
             
              if (node.alpha >= node.beta){
                 break;
             }}
 // Recursively call itself to go deeper into the tree. 
-                  i.state.makeMove(i.nodeId);
+                  //i.state.makeMove(i.nodeId);
                 i = minimaxAbp(depthLevel - 1, i, 2);
                 
                 // If new utility score is better, store it as well as store the nodeId in prevNode for backtracking. 
@@ -246,16 +246,17 @@ public class AIClient implements Runnable {
             }
             return node;
             
-        } else if (player == 2) { // If player = MIN
-            node.MinValue = 9999;
+        } else  // If player = MIN
+            node.MinValue = 999999;
             for (Node i : node.children) { 
-                if(node.MinValue <= node.beta){
+                if(node.MinValue < node.beta){
                     node.beta = node.MinValue;
                                 
                 if (node.alpha >= node.beta){
                     break;
-                }}
-                i.state.makeMove(i.nodeId);
+                }
+                }
+                //i.state.makeMove(i.nodeId);
                 i = minimaxAbp(depthLevel - 1, i, 1);
                 if (i.MinValue < node.MinValue) {
                     node.MinValue = i.MinValue;
@@ -263,10 +264,10 @@ public class AIClient implements Runnable {
                 }
             }
             return node;
-        }
+        
 
         // Should never get here.
-        return null;
+        //return null;
     }
 
     /**
