@@ -207,59 +207,61 @@ public class AIClient implements Runnable {
     public Node minimaxAbp(int depthLevel, Node node, int player) {
     	
     	
-    	
+    
 
         // Expand the node to find children. 
         node.expandNode();
         
         
         
+        
+        
         // Check if maximum depth level has been reached or if node is terminal node.
-        if (depthLevel == 0 || node.isTerminalNode) {
+        if (depthLevel <= 0 || node.isTerminalNode) {
             // Calculate utility score for the node.
-           //node.calculateUtilityScore();
+           node.calculateUtilityScore();
             return node;
             }
         
         else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
-            node.MaxValue = -999999;
+            node.Value = -999;
             
-            for (Node i : node.children) {
+            for (Node i : node.moves) {
                 
-            if(node.MaxValue > node.alpha){
-                node.alpha = node.MaxValue;
-            
-             if (node.alpha >= node.beta){
+            if(node.Value > node.alpha){
+                node.alpha = node.Value;
+            }
+                else if (node.alpha >= node.beta){
                 break;
-            }}
+            
+                }
 // Recursively call itself to go deeper into the tree. 
-                  //i.state.makeMove(i.nodeId);
+                i.state.makeMove(i.nodeId); 
                 i = minimaxAbp(depthLevel - 1, i, 2);
                 
                 // If new utility score is better, store it as well as store the nodeId in prevNode for backtracking. 
                 
-                if (i.MaxValue > node.MaxValue) {
-                    node.MaxValue = i.MaxValue;
+                if (i.Value > node.Value) {
+                    node.Value = i.Value;
                     node.prevNode = i.nodeId;
                 }
             }
             return node;
             
-        } else  // If player = MIN
-            node.MinValue = 999999;
-            for (Node i : node.children) { 
-                if(node.MinValue < node.beta){
-                    node.beta = node.MinValue;
-                                
-                if (node.alpha >= node.beta){
+        } else if(player == 2) // If player = MIN
+            node.Value = 999;
+            for (Node i : node.moves) { 
+                if(node.Value < node.beta){ 
+                    node.beta = node.Value;
+                }               
+                else if (node.beta <= node.alpha){
                     break;
                 }
-                }
-                //i.state.makeMove(i.nodeId);
+                i.state.makeMove(i.nodeId);
                 i = minimaxAbp(depthLevel - 1, i, 1);
-                if (i.MinValue < node.MinValue) {
-                    node.MinValue = i.MinValue;
+                if (i.Value < node.Value) {
+                    node.Value = i.Value;
                     node.prevNode = i.nodeId;
                 }
             }
@@ -276,7 +278,7 @@ public class AIClient implements Runnable {
      * @return Random ambo number
      */
     // This part of the code is not needed anymore
-    // public int getRandom() {
-    //   return 1 + (int) (Math.random() * 6);
-    // }
+     public int getRandom() {
+       return 1 + (int) (Math.random() * 6);
+     }
 }

@@ -15,13 +15,12 @@ public class Node {
     public int nodeId;
     // Previous node exists to easily keep track of the previous node for backtracking up the tree, prevNode is in the end = bestMove 
     public int prevNode;
-    public int MaxValue;
-    public int MinValue;
+    public int Value;
     public int alpha;
     public int beta;
     public int score;
     
-    public ArrayList<Node> children = new ArrayList();
+    public ArrayList<Node> moves = new ArrayList();
     public boolean isTerminalNode;
     
     public Node(GameState state, int nodeId, int alpha, int beta) {
@@ -42,11 +41,11 @@ public class Node {
             // If the move is possible -> store in children, else discard it. 
             if (state.moveIsPossible(i)) {
                 isTerminalNode = false;
-                children.add(new Node(state.clone(), i));
+                moves.add(new Node(state.clone(), i));
             }
         }
         // If there's no children the node is a terminal node / leaf node. 
-        if(children.size() <= 0){
+        if(moves.size() <= 0){
             isTerminalNode = true;
         }
 
@@ -54,7 +53,7 @@ public class Node {
     
     // Calculate utility score.
     public void calculateUtilityScore() {
-       score = 10*state.getScore(1) - state.getScore(2);
+       score = 2*state.getScore(1) - state.getScore(2);
     }   
 
 }
