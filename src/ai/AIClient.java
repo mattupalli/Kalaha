@@ -11,7 +11,7 @@ import kalaha.*;
  * This is the main class for your Kalaha AI bot. Currently it only makes a
  * random, valid move each turn.
  *
- * @author Johan Hagelb‰ck
+ * @author Johan Hagelb√§ck
  */
 public class AIClient implements Runnable {
 
@@ -78,7 +78,7 @@ public class AIClient implements Runnable {
 
         frame.getContentPane().add(pane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+ 
         frame.setVisible(true);
     }
 
@@ -187,11 +187,11 @@ public class AIClient implements Runnable {
      */
     public int getMove(GameState currentBoard) {
 
-        // Grade C. Minimax with DFS and ABP
-        Node rootNode = new Node(currentBoard.clone(), 0, -999999, 999999); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
-        int depth = 8; // How deep the algoritm should go.
-        Node bestNode = minimaxAbp(depth, rootNode, 1); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
-        int bestMove = bestNode.prevNode; // Best move is stored in the nodes prevNode variable. 
+        // Grade C. Min imax with DPS and ABP
+        Node rootNode = new Node(currentBoard.clone(), 0, -10000, 10000); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
+        int depth = 8; // How deep the algorithm should go.
+        Node bestChild = minimaxAbp(depth, rootNode, player); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
+        int bestMove = bestChild.prevNode; // Best move is stored in the nodes prevNode variable. 
 
         return bestMove;
     }
@@ -205,71 +205,59 @@ public class AIClient implements Runnable {
      * @return The node with the best utility score. 
      */
     public Node minimaxAbp(int depthLevel, Node node, int player) {
-    	
-    	
-    
 
         // Expand the node to find children. 
         node.expandNode();
         
-        
-        
-        
-        
-        // Check if maximum depth level has been reached or if node is terminal node.
-        if (depthLevel <= 0 || node.isTerminalNode) {
+        // Check if maximum depthlevel has been reached or if node is terminal node.
+        if (depthLevel <= 0 || node.terminal) {
             // Calculate utility score for the node.
-           node.calculateUtilityScore();
+            node.calculateUtilityScore();
             return node;
-            }
-        
-        else if (player == 1) { // If player = MAX
+        } else if (player == 1) { // If player = MAX
             // Initiate to worst possible score. 
-            node.Value = -999;
+            node.value = -10000;
             
-            for (Node i : node.moves) {
-                
-            if(node.Value > node.alpha){
-                node.alpha = node.Value;
-            }
-                else if (node.alpha >= node.beta){
-                break;
-            
-                }
-// Recursively call itself to go deeper into the tree. 
-                i.state.makeMove(i.nodeId); 
-                i = minimaxAbp(depthLevel - 1, i, 2);
-                
+            for (Node n : node.moves) {
+                if (node.value > node.alpha) {
+                    node.alpha = node.value;
+                } // Check to see if we can prune 
+                else if (node.alpha > node.beta) {
+                    //Max prunes this branch. 
+                    break;
+                }            
+                n.state.makeMove(n.nodeId);
+                // Recursively calling itself to dig deeper into the tree. 
+                n = minimaxAbp(depthLevel - 1, n, 2);
                 // If new utility score is better, store it as well as store the nodeId in prevNode for backtracking. 
-                
-                if (i.Value > node.Value) {
-                    node.Value = i.Value;
-                    node.prevNode = i.nodeId;
+                if (n.value > node.value) {
+                    node.value = n.value;
+                    node.prevNode = n.nodeId;
                 }
             }
-            return node;
-            
-        } else if(player == 2) // If player = MIN
-            node.Value = 999;
-            for (Node i : node.moves) { 
-                if(node.Value < node.beta){ 
-                    node.beta = node.Value;
-                }               
-                else if (node.beta <= node.alpha){
+            return node; 
+        } 
+        else if (player == 2) { // If player = MIN
+            node.value = 10000;
+            for (Node n : node.moves) {   
+                if (node.value < node.beta) {
+                    node.beta = node.value;
+                } // Check to see if we can prune 
+                else if (node.alpha > node.beta) {
                     break;
                 }
-                i.state.makeMove(i.nodeId);
-                i = minimaxAbp(depthLevel - 1, i, 1);
-                if (i.Value < node.Value) {
-                    node.Value = i.Value;
-                    node.prevNode = i.nodeId;
+                n.state.makeMove(n.nodeId);
+                n = minimaxAbp(depthLevel - 1, n, 1);
+                if (n.value < node.value) {
+                    node.value = n.value;
+                    node.prevNode = n.nodeId;
                 }
             }
             return node;
-        
+        }
 
         // Should never get here.
-        //return null;
+        return null;
     }
 
     /**
@@ -277,8 +265,7 @@ public class AIClient implements Runnable {
      *
      * @return Random ambo number
      */
-    // This part of the code is not needed anymore
-     public int getRandom() {
-       return 1 + (int) (Math.random() * 6);
-     }
+    public int getRandom() {
+        return 1 + (int) (Math.random() * 6);
+    }
 }
