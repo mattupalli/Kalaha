@@ -3,6 +3,8 @@ package ai;
 import ai.Global;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import java.awt.*;
 import kalaha.*;
@@ -11,7 +13,7 @@ import kalaha.*;
  * This is the main class for your Kalaha AI bot. Currently it only makes a
  * random, valid move each turn.
  *
- * @author Johan Hagelbäck
+ * @author Johan HagelbÃ¤ck
  */
 public class AIClient implements Runnable {
 
@@ -26,6 +28,9 @@ public class AIClient implements Runnable {
     private boolean connected;
 
     private boolean searching;
+    
+    public ArrayList<Integer> moves = new ArrayList<Integer>();
+    public boolean isTerminal;
 
     /**
      * Creates a new client.
@@ -178,86 +183,77 @@ public class AIClient implements Runnable {
         }
     }
 
-    /**
-     * This is the method that makes a move each time it is your turn. Here you
-     * need to change the call to the random method to your Minimax search.
-     *
-     * @param currentBoard The current board state
-     * @return Move to make (1-6)
-     */
+    
     public int getMove(GameState currentBoard) {
-
-        // Grade C. Min imax with DPS and ABP
-        Node rootNode = new Node(currentBoard.clone(), 0, -10000, 10000); // Create a new node object. This one is the root node. Params: GameState, NodeId, Alpha, Beta values.
-        int depth = 8; // How deep the algorithm should go.
-        Node bestChild = minimaxAbp(depth, rootNode, player); // Returns the node with the best path. Params: Maximum depth, root node, player (1 = MAX, 2 = MIN).
-        int bestMove = bestChild.prevNode; // Best move is stored in the nodes prevNode variable. 
-
-        return bestMove;
+    	
+    	int best_move = 0;
+    	int best_score= Integer.MIN_VALUE;
+    	int current_score= 0;
+    	int depth = 3;
+    	
+    	for(int ambo=1; ambo<=6 ; ambo++) {
+    		if(currentBoard.moveIsPossible(ambo)) {
+    			moves.add(ambo);
+    		}
+    	}
+    	
+    	for(int i: moves) {
+    		
+    		GameState gs = currentBoard.clone();
+    		if(gs.makeMove(i)) {
+    			current_score= play(gs,depth,Integer.MIN_VALUE,Integer.MAX_VALUE,player);	
+    		}
+    		
+    		if(current_score > best_score) {
+    			best_score = current_score;
+    			best_move = i;
+    		}
+    		System.out.println(current_score + "  "+best_move );
+    		}
+    	return best_move;
+    		
     }
-
-    /**
-     * This is the Minimax method. It uses Depth-first search along with alpha-beta pruning. 
-     *
-     * @param depthLevel The current depth of the search.
-     * @param node The node to be expanded / searched.
-     * @param player The player that is going to make the move, either 1 for MAX or 2 for MIN.
-     * @return The node with the best utility score. 
-     */
-    public Node minimaxAbp(int depthLevel, Node node, int player) {
-
-        // Expand the node to find children. 
-        node.expandNode();
-        
-        // Check if maximum depthlevel has been reached or if node is terminal node.
-        if (depthLevel <= 0 || node.terminal) {
-            // Calculate utility score for the node.
-            node.calculateUtilityScore();
-            return node;
-        } else if (player == 1) { // If player = MAX
-            // Initiate to worst possible score. 
-            node.value = -10000;
-            
-            for (Node n : node.moves) {
-                if (node.value > node.alpha) {
-                    node.alpha = node.value;
-                } // Check to see if we can prune 
-                else if (node.alpha > node.beta) {
-                    //Max prunes this branch. 
-                    break;
-                }            
-                n.state.makeMove(n.nodeId);
-                // Recursively calling itself to dig deeper into the tree. 
-                n = minimaxAbp(depthLevel - 1, n, 2);
-                // If new utility score is better, store it as well as store the nodeId in prevNode for backtracking. 
-                if (n.value > node.value) {
-                    node.value = n.value;
-                    node.prevNode = n.nodeId;
-                }
-            }
-            return node; 
-        } 
-        else if (player == 2) { // If player = MIN
-            node.value = 10000;
-            for (Node n : node.moves) {   
-                if (node.value < node.beta) {
-                    node.beta = node.value;
-                } // Check to see if we can prune 
-                else if (node.alpha > node.beta) {
-                    break;
-                }
-                n.state.makeMove(n.nodeId);
-                n = minimaxAbp(depthLevel - 1, n, 1);
-                if (n.value < node.value) {
-                    node.value = n.value;
-                    node.prevNode = n.nodeId;
-                }
-            }
-            return node;
-        }
-
-        // Should never get here.
-        return null;
+    
+    public int play(GameState gs, int depth, int alpha, int beta, int player) {
+    	
+    	int current_score, utility;
+    	int val = (player == 1) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+    	
+    	if(depth == 0) {
+    		
+    		utility = gs.getScore(1) - gs.getScore(2);
+    		return utility;
+    	}
+    	
+    	for(int i : moves) {
+    		
+    		GameState state = gs.clone();
+    		
+    		if(player == 1) {
+    			
+    			current_score = play(gs,depth - 1,alpha,beta,2);
+    			
+    			val = Math.max(val,current_score);
+    			
+    			alpha = Math.max(alpha, val);
+    			if(alpha > beta)
+    				break;
+    		}
+    		
+    		else if(player == 2) {
+    			
+    			current_score = play(gs,depth - 1,alpha,beta,1);
+    			
+    			val = Math.min(val, current_score);
+    			
+    			beta = Math.min(beta, val);
+    			if(beta < alpha)
+    				break;
+    		}
+    	}
+    	
+    	return val;
+    	
     }
 
     /**
